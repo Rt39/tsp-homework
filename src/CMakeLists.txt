@@ -13,7 +13,6 @@ add_library(weight_graph
 )
 add_library(astar
     STATIC
-        auxiliarystar.cpp
         astar.cpp
 )
 target_link_libraries(astar
