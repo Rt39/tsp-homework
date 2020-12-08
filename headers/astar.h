@@ -11,11 +11,11 @@ private:
     // an auxiliary class contains everything needed in Astar Algorithm
     struct AuxiliaryStar {
         const Graph& G;
-        std::vector<size_t> path;
-        bool* marked;
-        IndexMinPQ pq;
-        double dist;
-        double evaluate;
+        std::vector<size_t> path; // conserve the path having been searched
+        bool* marked; // mark the path that already visited
+        IndexMinPQ pq; // conserve all the pathes which are possible to visit
+        double dist; // distance that are already visited
+        double evaluate; // f(x) minimal evaluation of the total distance
 
         AuxiliaryStar(const Graph& G);
         ~AuxiliaryStar();

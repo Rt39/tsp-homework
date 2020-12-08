@@ -1,5 +1,6 @@
 #include "astar.h"
 #include <stdexcept>
+// comparator needed in priority queue
 const std::function<bool(Astar::AuxiliaryStar*, Astar::AuxiliaryStar*)> Astar::cmp =
     [](AuxiliaryStar* lhs, AuxiliaryStar* rhs) -> bool {
     return lhs->evaluate > rhs->evaluate;
@@ -25,35 +26,40 @@ Astar::AuxiliaryStar::AuxiliaryStar(const AuxiliaryStar& orgi, const Edge& e)
     path.push_back(w);
     marked[ w ] = true;
     dist += e.weight();
+    // having searched all the point
     if (path.size() == orgi.G.sizeV()) {
         const Edge& e = G.between(w, 0);
-        evaluate = dist = dist + e.weight();
+        evaluate = dist = dist + e.weight(); // the evaluation and distance is fixed
         return;
     }
+    // f(n)=g(n)+h(n)
+    // g(n)is the current distance
+    // h(n)is the shortest edge able to visit times number of edges left to be visit
     evaluate = dist + (G.sizeV() - path.size() + 1) * pq.minElem();
     for (const size_t& e : G.adj(w))
         pq.delElem(e);
 }
 
+// doing Astar search
 Astar::Astar(const Graph& G) : pq(cmp) {
     AuxiliaryStar* t = new AuxiliaryStar(G);
     pq.push(t);
     while (true) {
         AuxiliaryStar* a = pq.top();
         pq.pop();
+        // find a complete route shorter than the minimun evaluation of any other
         if (a->path.size() == G.sizeV()) {
-            std::vector<size_t> path = a->path;
-            double dist = a->dist;
+            this->path = a->path;
+            this->dist = a->dist;
             delete a;
             while (!pq.empty()) {
                 AuxiliaryStar* t = pq.top();
                 pq.pop();
                 delete t;
             }
-            this->path = path;
-            this->dist = dist;
             return;
         }
+        // the current lowest evaluation
         size_t v = a->path.back();
         for (size_t ind : G.adj(v)) {
             const Edge& e = G.getEdge(ind);
