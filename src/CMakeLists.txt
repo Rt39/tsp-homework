@@ -1,0 +1,26 @@
+include_directories(${PROJECT_SOURCE_DIR}/headers)
+add_executable(
+    ${PROJECT_NAME} main.cpp
+)
+add_library(indexminpq 
+    STATIC 
+        indexminpq.cpp
+)
+add_library(weight_graph
+    STATIC
+        edge.cpp
+        graph.cpp
+)
+add_library(astar
+    STATIC
+        astar.cpp
+)
+target_link_libraries(astar
+    PUBLIC
+        indexminpq
+        weight_graph
+)
+target_link_libraries(${PROJECT_NAME}
+    PUBLIC
+        astar
+)
