@@ -15,12 +15,21 @@ add_library(astar
     STATIC
         astar.cpp
 )
+add_library(genetic
+    STATIC
+        genetic.cpp
+)
 target_link_libraries(astar
     PUBLIC
         indexminpq
         weight_graph
 )
+target_link_libraries(genetic
+    PUBLIC
+        weight_graph
+)
 target_link_libraries(${PROJECT_NAME}
     PUBLIC
         astar
+        genetic
 )

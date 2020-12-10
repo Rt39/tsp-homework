@@ -1,4 +1,5 @@
 #include "astar.h"
+#include "genetic.h"
 #include <iostream>
 #include <stdlib.h>
 using namespace std;
@@ -8,5 +9,10 @@ int main() {
     for (auto i : asw.shortestPath())
         cout << i << " ";
     cout << "\n";
-    cout << asw.shortestDistance();
+    cout << asw.shortestDistance() << "\n";
+    Genetic gasw(g);
+    for (auto i : gasw.runPath())
+        cout << i << " ";
+    cout << "\n";
+    cout << gasw.runDist();
 }
