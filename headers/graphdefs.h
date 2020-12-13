@@ -3,7 +3,11 @@
 
 #include <utility>
 
-constexpr const size_t R = 200;
-constexpr const std::pair<double, double> coordinate[ R ]{{1, 1}, {2, 2}, {1, 2}, {0, 0}};
+namespace graphdefs {
+
+constexpr const size_t R = 100;
+std::pair<double, double> coordinate[ R ];
+
+} // namespace graphdefs
 
 #endif
