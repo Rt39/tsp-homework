@@ -8,26 +8,26 @@ const std::function<bool(Astar::AuxiliaryStar*, Astar::AuxiliaryStar*)> Astar::c
 
 // nested auxiliary class
 Astar::AuxiliaryStar::AuxiliaryStar(const Graph& G)
-    : G(G), marked(new bool[ G.sizeV() ]), pq(G.sizeE()), dist(0), evaluate(0) {
-    for (size_t i = 1; i < G.sizeV(); ++i)
+    : G(G), marked(new bool[ G.V ]), pq(G.E), dist(0), evaluate(0) {
+    for (size_t i = 1; i < G.V; ++i)
         marked[ i ] = false;
     marked[ 0 ] = true;
     path.push_back(0);
-    for (size_t i = G.sizeV() - 1; i < G.sizeE(); ++i)
+    for (size_t i = G.V - 1; i < G.E; ++i)
         pq.insert(i, G.getEdge(i).weight());
 }
 Astar::AuxiliaryStar::~AuxiliaryStar() { delete[] marked; }
 Astar::AuxiliaryStar::AuxiliaryStar(const AuxiliaryStar& orgi, const Edge& e)
-    : G(orgi.G), path(orgi.path), marked(new bool[ G.sizeV() ]), pq(orgi.pq),
-      dist(orgi.dist), evaluate(orgi.evaluate) {
-    std::copy(orgi.marked, orgi.marked + G.sizeV(), marked);
+    : G(orgi.G), path(orgi.path), marked(new bool[ G.V ]), pq(orgi.pq), dist(orgi.dist),
+      evaluate(orgi.evaluate) {
+    std::copy(orgi.marked, orgi.marked + G.V, marked);
     size_t v = path.back(), w = e.other(v);
     if (marked[ w ]) throw std::invalid_argument("already in path");
     path.push_back(w);
     marked[ w ] = true;
     dist += e.weight();
     // having searched all the point
-    if (path.size() == orgi.G.sizeV()) {
+    if (path.size() == orgi.G.V) {
         const Edge& e = G.between(w, 0);
         evaluate = dist = dist + e.weight(); // the evaluation and distance is fixed
         return;
@@ -35,7 +35,7 @@ Astar::AuxiliaryStar::AuxiliaryStar(const AuxiliaryStar& orgi, const Edge& e)
     // f(n)=g(n)+h(n)
     // g(n)is the current distance
     // h(n)is the shortest edge able to visit times number of edges left to be visit
-    evaluate = dist + (G.sizeV() - path.size() + 1) * pq.minElem();
+    evaluate = dist + (G.V - path.size() + 1) * pq.minElem();
     for (const size_t& e : G.adj(w))
         pq.delElem(e);
 }
@@ -48,7 +48,7 @@ Astar::Astar(const Graph& G) : pq(cmp) {
         AuxiliaryStar* a = pq.top();
         pq.pop();
         // find a complete route shorter than the minimun evaluation of any other
-        if (a->path.size() == G.sizeV()) {
+        if (a->path.size() == G.V) {
             this->path = a->path;
             this->dist = a->dist;
             delete a;

@@ -1,15 +1,16 @@
 #include "genetic.h"
 #include <algorithm>
+#include <ctime>
 #include <random>
 #include <unordered_set>
 
-std::default_random_engine random_engine;
 
-Genetic::population::population(const Graph& G)
-    : G(G), V(G.sizeV()), arrangement(new size_t[ V ]) {
+std::default_random_engine randomEngine(time(nullptr));
+
+Genetic::population::population(const Graph& G) : G(G), V(G.V), arrangement(new size_t[ V ]) {
     for (size_t i = 0; i < V; ++i)
         arrangement[ i ] = i;
-    std::shuffle(arrangement, arrangement + V, random_engine);
+    std::shuffle(arrangement, arrangement + V, randomEngine);
     updateDist();
 }
 Genetic::population::~population() { delete[] arrangement; }
@@ -22,7 +23,7 @@ void Genetic::population::updateDist() {
 }
 void Genetic::population::mutate() {
     std::uniform_int_distribution<size_t> u(0, V - 1);
-    size_t a = u(random_engine), b = u(random_engine);
+    size_t a = u(randomEngine), b = u(randomEngine);
     std::swap(arrangement[ a ], arrangement[ b ]);
     updateDist();
 }
@@ -33,7 +34,7 @@ std::pair<size_t, size_t> Genetic::choose() {
     for (size_t i = 0; i < V; ++i)
         evalsum[ i ] = (sum += p[ i ].eval);
     std::uniform_real_distribution<double> u(0.0, sum);
-    double a = u(random_engine), b = u(random_engine);
+    double a = u(randomEngine), b = u(randomEngine);
     double *l = std::lower_bound(evalsum, evalsum + V, a),
            *r = std::lower_bound(evalsum, evalsum + V, b);
     return {l - evalsum, r - evalsum};
@@ -41,13 +42,12 @@ std::pair<size_t, size_t> Genetic::choose() {
 void Genetic::cross() {
     auto [ a, b ] = choose();
     std::uniform_int_distribution<size_t> u(0, V);
-    size_t r1 = u(random_engine), r2 = u(random_engine);
+    size_t r1 = u(randomEngine), r2 = u(randomEngine);
     size_t lft = std::min(r1, r2), rht = std::max(r1, r2);
     size_t *fir = p[ a ].arrangement, *sec = p[ b ].arrangement;
     size_t fir_cop[ V ];
     std::copy(fir, fir + V, fir_cop);
-    std::unordered_set<size_t> fir_gene(fir + lft, fir + rht),
-        sec_gene(sec + lft, sec + rht);
+    std::unordered_set<size_t> fir_gene(fir + lft, fir + rht), sec_gene(sec + lft, sec + rht);
     for (size_t i = 0, j = 0; i < V && j < V; ++j) {
         if (i == lft) i = rht;
         if (!fir_gene.count(sec[ j ])) {
@@ -66,9 +66,9 @@ void Genetic::cross() {
     p[ b ].updateDist();
 }
 
-Genetic::Genetic(const Graph& G, size_t population_num, double cross_rate,
-                 double mutation_rate, size_t iteration_num)
-    : G(G), V(G.sizeV()), POPULATION_NUM(population_num), CROSS_RATE(cross_rate),
+Genetic::Genetic(const Graph& G, size_t population_num, double cross_rate, double mutation_rate,
+                 size_t iteration_num)
+    : G(G), V(G.V), POPULATION_NUM(population_num), CROSS_RATE(cross_rate),
       MUTATION_RATE(mutation_rate), ITERATION_NUM(iteration_num) {
     std::allocator<population> alloc;
     p = alloc.allocate(POPULATION_NUM);
@@ -76,10 +76,10 @@ Genetic::Genetic(const Graph& G, size_t population_num, double cross_rate,
         alloc.construct(p + i, G);
     for (size_t i = 0; i < ITERATION_NUM; ++i) {
         std::uniform_real_distribution<double> ur(0.0, 1.0);
-        if (ur(random_engine) < CROSS_RATE) cross();
-        if (ur(random_engine) < MUTATION_RATE) {
+        if (ur(randomEngine) < CROSS_RATE) cross();
+        if (ur(randomEngine) < MUTATION_RATE) {
             std::uniform_int_distribution<size_t> ui(0, V - 1);
-            p[ ui(random_engine) ].mutate();
+            p[ ui(randomEngine) ].mutate();
         }
     }
     size_t best = 0;
