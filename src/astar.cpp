@@ -2,9 +2,7 @@
 #include <stdexcept>
 // comparator needed in priority queue
 const std::function<bool(Astar::AuxiliaryStar*, Astar::AuxiliaryStar*)> Astar::cmp =
-    [](AuxiliaryStar* lhs, AuxiliaryStar* rhs) -> bool {
-    return lhs->evaluate > rhs->evaluate;
-};
+    [](AuxiliaryStar* lhs, AuxiliaryStar* rhs) -> bool { return lhs->evaluate > rhs->evaluate; };
 
 // nested auxiliary class
 Astar::AuxiliaryStar::AuxiliaryStar(const Graph& G)
@@ -35,7 +33,7 @@ Astar::AuxiliaryStar::AuxiliaryStar(const AuxiliaryStar& orgi, const Edge& e)
     // f(n)=g(n)+h(n)
     // g(n)is the current distance
     // h(n)is the shortest edge able to visit times number of edges left to be visit
-    evaluate = dist + (G.V - path.size() + 1) * pq.minElem();
+    evaluate = dist + (G.V - path.size()) * pq.minElem();
     for (const size_t& e : G.adj(w))
         pq.delElem(e);
 }
