@@ -6,7 +6,6 @@
 #include <ctime>
 #include <vector>
 
-
 class Graph {
 public:
     const size_t V; // vertex numbers V
@@ -34,16 +33,16 @@ public:
 inline const Edge& Graph::getEdge(size_t e) const {
     if (e >= E)
         throw std::invalid_argument("index >= edges: V * (V - 1) / 2 =" + std::to_string(E));
-    return edges[ e ];
+    return edges[e];
 }
 inline const Edge& Graph::between(size_t v, size_t w) const {
     if (v == w) throw std::invalid_argument("no edge between oneself");
     size_t a = std::min(v, w), b = std::max(v, w);
-    return getEdge(Adj[ a ][ b - 1 ]);
+    return getEdge(Adj[a][b - 1]);
 }
 inline const std::vector<size_t>& Graph::adj(size_t v) const {
     if (v >= V) throw std::invalid_argument("index >= vetexs: " + std::to_string(V));
-    return Adj[ v ];
+    return Adj[v];
 }
 
 #endif

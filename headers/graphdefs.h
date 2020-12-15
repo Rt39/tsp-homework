@@ -6,7 +6,7 @@
 namespace graphdefs {
 
 constexpr const size_t R = 100;
-std::pair<double, double> coordinate[ R ];
+std::pair<double, double> coordinate[R];
 
 } // namespace graphdefs
 

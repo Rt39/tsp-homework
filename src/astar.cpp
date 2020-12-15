@@ -6,23 +6,23 @@ const std::function<bool(Astar::AuxiliaryStar*, Astar::AuxiliaryStar*)> Astar::c
 
 // nested auxiliary class
 Astar::AuxiliaryStar::AuxiliaryStar(const Graph& G)
-    : G(G), marked(new bool[ G.V ]), pq(G.E), dist(0), evaluate(0) {
+    : G(G), marked(new bool[G.V]), pq(G.E), dist(0), evaluate(0) {
     for (size_t i = 1; i < G.V; ++i)
-        marked[ i ] = false;
-    marked[ 0 ] = true;
+        marked[i] = false;
+    marked[0] = true;
     path.push_back(0);
     for (size_t i = G.V - 1; i < G.E; ++i)
         pq.insert(i, G.getEdge(i).weight());
 }
 Astar::AuxiliaryStar::~AuxiliaryStar() { delete[] marked; }
 Astar::AuxiliaryStar::AuxiliaryStar(const AuxiliaryStar& orgi, const Edge& e)
-    : G(orgi.G), path(orgi.path), marked(new bool[ G.V ]), pq(orgi.pq), dist(orgi.dist),
+    : G(orgi.G), path(orgi.path), marked(new bool[G.V]), pq(orgi.pq), dist(orgi.dist),
       evaluate(orgi.evaluate) {
     std::copy(orgi.marked, orgi.marked + G.V, marked);
     size_t v = path.back(), w = e.other(v);
-    if (marked[ w ]) throw std::invalid_argument("already in path");
+    if (marked[w]) throw std::invalid_argument("already in path");
     path.push_back(w);
-    marked[ w ] = true;
+    marked[w] = true;
     dist += e.weight();
     // having searched all the point
     if (path.size() == orgi.G.V) {
@@ -62,7 +62,7 @@ Astar::Astar(const Graph& G) : pq(cmp) {
         for (size_t ind : G.adj(v)) {
             const Edge& e = G.getEdge(ind);
             size_t w = e.other(v);
-            if (!a->marked[ w ]) {
+            if (!a->marked[w]) {
                 AuxiliaryStar* t2 = new AuxiliaryStar(*a, e);
                 pq.push(t2);
             }

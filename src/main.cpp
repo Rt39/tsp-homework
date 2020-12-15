@@ -6,7 +6,7 @@
 
 using namespace std;
 int main() {
-    Graph g(11);
+    Graph g(10, 0u);
     time_t t1 = clock();
     Astar asw(g);
     time_t t2 = clock();
@@ -15,7 +15,10 @@ int main() {
         cout << i << " ";
     cout << "\n";
     cout << asw.shortestDistance() << "\n";
-    Genetic gasw(g);
+    time_t t3 = clock();
+    Genetic gasw(g, 20, 0.95, 0.01, 20000);
+    time_t t4 = clock();
+    cout << t4 - t3 << "\n";
     for (auto i : gasw.runPath())
         cout << i << " ";
     cout << "\n";
